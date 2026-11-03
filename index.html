@@ -467,6 +467,7 @@ textarea{min-height:76px;resize:vertical}
     <button role="tab" data-tab="today" aria-selected="true">Today</button>
     <button role="tab" data-tab="meds" aria-selected="false">Medicine</button>
     <button role="tab" data-tab="foods" aria-selected="false">Food chart</button>
+    <button role="tab" data-tab="plan" aria-selected="false">My plan</button>
     <button role="tab" data-tab="care" aria-selected="false">Care</button>
     <button role="tab" data-tab="body" aria-selected="false">BMI</button>
     <button role="tab" data-tab="week" aria-selected="false">This week</button>
@@ -523,6 +524,7 @@ textarea{min-height:76px;resize:vertical}
         <ul class="food" id="foodList"></ul>
         <div class="totals"><span>Total</span><span id="foodTotals">0 kcal · 0 g protein</span></div>
         <div id="nutriCard"></div>
+        <div id="dayReview"></div>
       </section>
 
       <section class="block">
@@ -568,7 +570,7 @@ textarea{min-height:76px;resize:vertical}
         <h2 class="secthead" data-icon="moon">Sleep and body</h2>
         <div class="grid2">
           <div class="field"><label for="sleep">Sleep last night (hours)</label><input id="sleep" type="number" inputmode="decimal" step="0.25" min="0" max="16"></div>
-          <div class="field"><label for="weight">Weight (kg) — weekly</label><input id="weight" type="number" inputmode="decimal" step="0.1" min="0"></div>
+          <div class="field"><label for="weight">Weight (kg) — daily, same time</label><input id="weight" type="number" inputmode="decimal" step="0.1" min="0"></div>
           <div class="field"><label for="waist">Waist (cm) — weekly</label><input id="waist" type="number" inputmode="decimal" step="0.5" min="0"></div>
         </div>
       </section>
@@ -583,6 +585,12 @@ textarea{min-height:76px;resize:vertical}
   </div>
 </div>
 
+<!-- =========================== MY PLAN =========================== -->
+<div id="tab-plan" hidden>
+  <div class="hero" style="grid-template-columns:1fr"><div><h1>My plan</h1>
+    <p class="hint">Built from your weight. Every time you log it, calories, protein, fat, carbs and water are worked out again: no manual changes needed. The Today rings use these numbers.</p></div></div>
+  <section class="block"><div id="myPlan"></div></section>
+</div>
 <!-- =========================== FOOD CHART =========================== -->
 <div id="tab-foods" hidden>
   <div class="hero" style="grid-template-columns:1fr"><div><h1>Food chart</h1>
@@ -1597,6 +1605,7 @@ function renderToday(){
     li.append(n,k,p,x); ul.appendChild(li); });
   document.getElementById("foodTotals").textContent = `${fmt(f.kcal)} kcal · ${fmt(f.protein)} g protein · ${fmt(f.fat)} g fat · ${fmt(f.fiber)} g fiber`;
   renderNutriCard(f);
+  renderDayReview(f);
 
   document.getElementById("waterNum").textContent = d.water||0;
   const gl = document.getElementById("glasses"); gl.innerHTML="";
@@ -3038,39 +3047,190 @@ function renderPortionGuide(){
    the SAME daily deficit you chose is kept. Your last manual change is the
    anchor: changing the target yourself resets the anchor to it.
 ------------------------------------------------------------------ */
-const AUTO_STEP_KG = 2;
+/* ------------------------------------------------------------------
+   AUTO TARGETS FROM YOUR WEIGHT
+   Every weigh-in recalculates calories, protein, fat, carbs and water.
+   It uses your TREND weight (average of the weigh-ins in the last 7 days),
+   because one day's number moves 0.5–1.5 kg with water and salt.
+   Calories = what your body burns at the trend weight − the deficit you chose.
+   Changing calories yourself in Targets makes that your new deficit.
+------------------------------------------------------------------ */
 function personAge(){ return settings.age || (typeof B!=="undefined" && B.age) || 30; }
 function personSex(){ return settings.sex || (typeof B!=="undefined" && B.sex) || "m"; }
 function tdeeAt(w){ return mifflin(personSex(), w, settings.heightCm||170, personAge()) * (+settings.act||1.375); }
-function latestWeight(){ const ks=Object.keys(days).sort().reverse(); for(const k of ks){ const v=days[k]&&days[k].weight; if(v>=30 && v<=350) return +v; } return null; }
-function setAnchor(w){ settings.anchorW = w || latestWeight() || settings.startWeight; settings.anchorKcal = settings.kcal; settings.lastAutoW = settings.anchorW; }
+function weighIns(){ return Object.keys(days).sort().filter(k=>{ const v=days[k]&&days[k].weight; return v>=30 && v<=350; }).map(k=>({k, w:+days[k].weight})); }
+function latestWeight(){ const a=weighIns(); return a.length ? a[a.length-1].w : null; }
+function trendWeight(at){ at=at||todayKey(); const a=weighIns().filter(x=>x.k<=at); if(!a.length) return null;
+  const last=a[a.length-1].k, from=addDays(last,-6); const win=a.filter(x=>x.k>=from);
+  return Math.round(win.reduce((s,x)=>s+x.w,0)/win.length*10)/10; }
+function weeklyRate(){ // kg per week from the last 14 days of weigh-ins (least squares); null if not enough data
+  const a=weighIns(); if(a.length<4) return null; const last=a[a.length-1].k, from=addDays(last,-13); const p=a.filter(x=>x.k>=from); if(p.length<4) return null;
+  const t0=keyToDate(p[0].k).getTime(); const xs=p.map(x=>(keyToDate(x.k).getTime()-t0)/864e5), ys=p.map(x=>x.w);
+  const mx=xs.reduce((s,v)=>s+v,0)/xs.length, my=ys.reduce((s,v)=>s+v,0)/ys.length;
+  const num_=xs.reduce((s,v,i)=>s+(v-mx)*(ys[i]-my),0), den=xs.reduce((s,v)=>s+(v-mx)*(v-mx),0); if(!den) return null;
+  return Math.round(num_/den*7*100)/100; }
+function setAnchor(w){ w = w || trendWeight() || settings.startWeight; settings.anchorW=w; settings.anchorKcal=settings.kcal;
+  settings.deficit = Math.round(tdeeAt(w) - settings.kcal); settings.lastAutoW=w; }
+function chosenDeficit(){ if(settings.deficit==null){ const w=settings.anchorW, k=settings.anchorKcal;
+    settings.deficit = (w && k) ? Math.round(tdeeAt(w)-k) : 750; }
+  return Math.max(0, Math.min(1000, settings.deficit)); }
+function calcTargets(w){
+  const h=settings.heightCm||170, m2=(h/100)**2, bmr=mifflin(personSex(), w, h, personAge()), tdee=bmr*(+settings.act||1.375);
+  const floor=Math.max(settings.floor||0, personSex()==="m"?1500:1200), deficit=chosenDeficit();
+  const kcal=Math.max(floor, Math.round((tdee-deficit)/50)*50);
+  const refW=Math.min(w, 25*m2);                           // protein is based on a healthy-BMI reference weight, not on fat mass
+  const protein=Math.round(1.6*refW/5)*5;
+  const waterL=Math.min(3.5, Math.max(2, w*0.03));
+  const water=Math.round(waterL/0.25);
+  const fat=Math.round(kcal*(settings.fatPct||30)/100/9);
+  const carbs=Math.max(0, Math.round((kcal-4*protein-9*fat)/4));
+  const lossWeek=Math.round((tdee-kcal)*7/7700*100)/100;
+  return {w, h, bmr:Math.round(bmr), tdee:Math.round(tdee), deficit, realDeficit:Math.round(tdee-kcal), floor, kcal, protein, refW:Math.round(refW*10)/10, water, waterL:Math.round(waterL*10)/10, fat, carbs, fiber:settings.fiber||30, lossWeek};
+}
 function autoAdjust(){
   if(!settings.autoTarget) return false;
-  const w=latestWeight(); if(!w) return false;
-  if(!settings.anchorW || !settings.anchorKcal){ setAnchor(settings.startWeight||w); }
-  const ref = settings.lastAutoW || settings.anchorW;
-  if(Math.abs(w-ref) < AUTO_STEP_KG) return false;
-  const deficit = tdeeAt(settings.anchorW) - settings.anchorKcal;
-  const floor = Math.max(settings.floor||0, personSex()==="m"?1500:1200);
-  const next = Math.max(floor, Math.round((tdeeAt(w)-deficit)/50)*50);
-  settings.lastAutoW = w;
-  if(next===settings.kcal) return false;
-  settings.autoNote = {from:settings.kcal, to:next, w, ref, date:todayKey(), seen:false};
-  settings.kcal = next; saveLocal(); return true;
+  const w=trendWeight(); if(!w) return false;
+  const t=calcTargets(w);
+  const before={kcal:settings.kcal, protein:settings.protein, water:settings.water};
+  settings.lastAutoW=w;
+  if(before.kcal===t.kcal && before.protein===t.protein && before.water===t.water) return false;
+  settings.kcal=t.kcal; settings.protein=t.protein; settings.water=t.water;
+  settings.targetLog=(settings.targetLog||[]).filter(x=>x.date!==todayKey()).concat([{date:todayKey(), w, kcal:t.kcal, protein:t.protein, water:t.water}]).slice(-120);
+  settings.autoNote={from:before, to:{kcal:t.kcal, protein:t.protein, water:t.water}, w, date:todayKey(), seen:false};
+  saveLocal(); return true;
 }
 function renderAutoNote(){
   const n=settings.autoNote, box=document.getElementById("autoNote"); if(!box) return; box.innerHTML="";
-  if(!n || n.seen) return;
-  const v=document.createElement("div"); v.className="verdict ok"; v.style.marginTop="6px";
-  const h=document.createElement("h3"); h.textContent=`Calorie target updated: ${n.from.toLocaleString()} → ${n.to.toLocaleString()} kcal`;
-  const p=document.createElement("p"); p.className="hint"; p.style.margin="0";
-  p.textContent = n.to<n.from ? `You've gone from ${n.ref} kg to ${n.w} kg — a lighter body burns less, so your target moves down to keep you losing at the same pace.`
-                              : `Your weight went from ${n.ref} kg to ${n.w} kg, so your target moved up to keep the same pace.`;
-  const row=document.createElement("div"); row.className="row"; row.style.marginTop="8px";
-  const ok=document.createElement("button"); ok.className="btn small"; ok.textContent="OK"; ok.onclick=()=>{ n.seen=true; scheduleSave(); renderAll(); };
-  const undo=document.createElement("button"); undo.className="btn ghost small"; undo.textContent="Undo";
-  undo.onclick=()=>{ settings.kcal=n.from; settings.lastAutoW=n.ref; n.seen=true; scheduleSave(); renderAll(); };
-  row.append(ok,undo); v.append(h,p,row); box.appendChild(v);
+  if(!n || n.seen || !n.to) return;
+  const v=el2("div","verdict ok"); v.style.marginTop="6px";
+  const parts=[]; if(n.from.kcal!==n.to.kcal) parts.push(`calories ${fmt(n.from.kcal)} → ${fmt(n.to.kcal)} kcal`);
+  if(n.from.protein!==n.to.protein) parts.push(`protein ${n.from.protein} → ${n.to.protein} g`);
+  if(n.from.water!==n.to.water) parts.push(`water ${n.from.water} → ${n.to.water} glasses`);
+  v.appendChild(el2("h3","",`Targets updated for ${n.w} kg: ${parts.join(" · ")}`));
+  const p=el2("p","hint", n.to.kcal<n.from.kcal ? "A lighter body burns less, so your targets move down to keep you losing at the same pace. Details are in My plan." : "Your targets follow your trend weight. Details are in My plan."); p.style.margin="0";
+  const row=el2("div","row"); row.style.marginTop="8px";
+  const ok=el2("button","btn small","OK"); ok.onclick=()=>{ n.seen=true; scheduleSave(); renderAll(); };
+  const open=el2("button","btn ghost small","Open My plan"); open.onclick=()=>{ n.seen=true; scheduleSave(); document.querySelector('nav.tabs button[data-tab="plan"]').click(); };
+  const undo=el2("button","btn ghost small","Undo"); undo.onclick=()=>{ Object.assign(settings, n.from); settings.autoTarget=false; n.seen=true; scheduleSave(); renderAll(); };
+  row.append(ok,open,undo); v.append(p,row); box.appendChild(v);
+}
+
+/* ------------------------------------------------------------------
+   MY PLAN — how every number is worked out, the trend, and a meal calculator
+------------------------------------------------------------------ */
+const MEAL_SPLIT=[["Breakfast",0.30],["Lunch",0.30],["Dinner",0.30],["Snack",0.10]];
+function renderMyPlan(){
+  const box=document.getElementById("myPlan"); if(!box) return; box.innerHTML="";
+  const w=trendWeight(), last=latestWeight();
+  if(!w){ box.appendChild(el2("p","hint","Log your weight on Today (Sleep and body). Your plan builds itself from it.")); return; }
+  const t=calcTargets(w), h=t.h, m2=(h/100)**2;
+  // 1. numbers
+  const k=el2("div","kpis");
+  [[`${w} kg`,"trend weight (7-day average)"],[`${last} kg`,"last weigh-in"],[`${(w/m2).toFixed(1)}`,"BMI"],[`${fmt(t.kcal)}`,"kcal a day"],[`${t.protein} g`,"protein a day"],[`${t.water}`,"glasses of water"]]
+    .forEach(([b,s])=>{ const d=el2("div","kpi"); d.append(el2("b","",b), el2("span","",s)); k.appendChild(d); });
+  box.appendChild(k);
+  // auto switch + deficit choice
+  const ctl=el2("div","row"); ctl.style.margin="10px 0";
+  const lab=el2("label","switch"); const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=!!settings.autoTarget;
+  cb.onchange=()=>{ settings.autoTarget=cb.checked; if(cb.checked) autoAdjust(); scheduleSave(); renderAll(); renderMyPlan(); };
+  lab.append(cb, document.createTextNode(" Update my targets automatically every time I log my weight"));
+  const sel=document.createElement("select"); sel.setAttribute("aria-label","Daily deficit");
+  [[500,"Steady · 500 kcal a day (≈0.45 kg a week)"],[750,"Firm · 750 kcal a day (≈0.7 kg a week)"],[1000,"Strict · 1,000 kcal a day (≈0.9 kg a week)"]].forEach(([v,txt])=>{ const o=document.createElement("option"); o.value=v; o.textContent=txt; sel.appendChild(o); });
+  const cur=chosenDeficit(); if(![500,750,1000].includes(cur)){ const o=document.createElement("option"); o.value=cur; o.textContent=`My own · ${cur} kcal a day`; sel.appendChild(o); }
+  sel.value=String(cur); sel.onchange=()=>{ settings.deficit=+sel.value; autoAdjust(); scheduleSave(); renderAll(); renderMyPlan(); };
+  ctl.append(lab, sel); box.appendChild(ctl);
+  // 2. how it's calculated
+  box.appendChild(el2("h3","","How your targets are worked out"));
+  const actName=({"1.2":"mostly sitting","1.375":"lightly active","1.55":"moderately active","1.725":"very active"})[String(settings.act)]||String(settings.act);
+  box.appendChild(tableHTML(["Step","Value","Why"],[
+    ["Trend weight", `${w} kg`, "Average of your weigh-ins in the last 7 days: daily weight jumps 0.5–1.5 kg with water and salt"],
+    ["Body at rest (BMR)", `${fmt(t.bmr)} kcal`, `Mifflin–St Jeor: 10 × ${w} + 6.25 × ${h} − 5 × ${personAge()} ${personSex()==="m"?"+ 5":"− 161"}`],
+    ["Burned per day (TDEE)", `${fmt(t.tdee)} kcal`, `BMR × ${settings.act} (${actName}). Change activity in Targets if this feels wrong`],
+    ["Deficit", `${fmt(t.realDeficit)} kcal`, t.kcal===t.floor && t.realDeficit<t.deficit ? `Capped: calories never go under your floor of ${fmt(t.floor)}` : "Chosen above. 7,700 kcal ≈ 1 kg of body fat"],
+    ["Calories to eat", `${fmt(t.kcal)} kcal`, "TDEE − deficit, rounded to 50"],
+    ["Protein", `${t.protein} g`, `1.6 g × ${t.refW} kg (your weight at BMI 25): protects muscle in a diet with gym`],
+    ["Fat (limit)", `${t.fat} g`, `${settings.fatPct||30}% of calories (WHO)`],
+    ["Carbs (about)", `${t.carbs} g`, "What's left after protein and fat"],
+    ["Fiber", `${t.fiber} g`, "Keeps you full; WHO at least 25 g"],
+    ["Water", `${t.water} glasses · ${t.waterL} L`, "About 30 ml per kg, capped at 3.5 L"]
+  ]));
+  // 3. pace
+  const rate=weeklyRate();
+  box.appendChild(el2("h3","","Your pace"));
+  let msg=`Planned: about ${t.lossWeek} kg a week.`;
+  if(rate===null) msg+=" Log your weight most days for 2 weeks to see your real pace.";
+  else { const lost=-rate; msg+=` Real (last 14 days): ${lost>=0?"−":"+"}${Math.abs(rate)} kg a week.`;
+    if(lost>t.lossWeek*1.6 && lost>0.6) msg+=" Faster than planned: often water and glycogen at the start. If it continues past week 3 and you feel drained, eat 200 kcal more.";
+    else if(lost<t.lossWeek*0.4) msg+=" Slower than planned. Before cutting food: weigh oil and roti for 3 days. Hidden oil is the most common reason a plan stalls.";
+    else msg+=" On track ✓"; }
+  if(settings.goalWeight && w>settings.goalWeight && t.lossWeek>0){ const wk=Math.ceil((w-settings.goalWeight)/t.lossWeek); const d=new Date(); d.setDate(d.getDate()+wk*7);
+    msg+=` At this pace you reach ${settings.goalWeight} kg around ${d.toLocaleDateString(LOC(),{month:"short",year:"numeric"})}.`; }
+  box.appendChild(el2("p","hint",msg));
+  // 4. meal split + calculator
+  box.appendChild(el2("h3","","Each meal's share"));
+  const rows=MEAL_SPLIT.map(([n,s])=>[n, `${fmt(t.kcal*s)} kcal`, `${Math.round(t.protein*s)} g protein`, `fat ≤ ${Math.round(t.fat*s)} g`]);
+  box.appendChild(tableHTML(["Meal","Calories","Protein","Fat"], rows));
+  box.appendChild(el2("h3","","Food calculator: how much of this fits my meal?"));
+  const cw=el2("div","row"); cw.style.alignItems="flex-end";
+  const fi=document.createElement("input"); fi.placeholder="Food, e.g. chicken, roti, daal"; fi.setAttribute("list","mpFoods"); fi.style.flex="1 1 200px"; fi.setAttribute("aria-label","Food");
+  const dl=document.createElement("datalist"); dl.id="mpFoods"; allFoods().forEach(f=>{ const o=document.createElement("option"); o.value=f.name; dl.appendChild(o); });
+  const ms=document.createElement("select"); ms.setAttribute("aria-label","Meal"); MEAL_SPLIT.forEach(([n])=>{ const o=document.createElement("option"); o.value=n; o.textContent=n; ms.appendChild(o); });
+  const out=el2("p","hint"); out.style.margin="8px 0 0";
+  const calc=()=>{ const f=foodByName(fi.value.trim()); if(!f){ out.textContent="Pick a food from the list."; return; }
+    const share=MEAL_SPLIT.find(x=>x[0]===ms.value)[1]; const kB=t.kcal*share, pB=t.protein*share;
+    const byK=kB/f.kcal, half=byK/2; const q=Math.max(0.25, Math.round(half*4)/4);
+    const gramUnit=/^\d+\s*g$/.test(f.unit||"");
+    const amt=x=> gramUnit ? `${Math.round(x*f.g/5)*5} g` : `${fmtQty(x)} × ${f.unit}${f.g?` (${Math.round(x*f.g)} g)`:""}`;
+    const per=`${amt(1)} = ${f.kcal} kcal, ${f.p} g protein${f.f!=null?`, ${f.f} g fat`:""}`;
+    out.textContent=`${per}. ${ms.value} budget: ${fmt(kB)} kcal and ${Math.round(pB)} g protein. For half the meal: about ${amt(q)} (${fmt(q*f.kcal)} kcal, ${Math.round(q*f.p)} g protein), the other half sabzi or salad. The whole meal of it would be ${amt(Math.round(byK*4)/4)}.`; };
+  fi.onchange=calc; ms.onchange=calc;
+  cw.append(fi, ms, dl); box.append(cw, out);
+  // 5. history
+  const log=(settings.targetLog||[]).slice().reverse();
+  if(log.length){ box.appendChild(el2("h3","","How your targets have changed"));
+    box.appendChild(tableHTML(["Date","Trend weight","Calories","Protein","Water"], log.slice(0,20).map(x=>[fmtShortDate(x.date), `${x.w} kg`, `${fmt(x.kcal)}`, `${x.protein} g`, `${x.water}`]))); }
+}
+function fmtShortDate(k){ return keyToDate(k).toLocaleDateString(LOC(),{day:"numeric",month:"short"}); }
+
+/* ------------------------------------------------------------------
+   TODAY'S REVIEW — what to change, worked out from what you actually ate
+------------------------------------------------------------------ */
+const FIX_FOODS=[["Boiled egg",2],["Chicken breast (grilled)",1.5],["Whey isolate",1],["Low-fat dahi",1],["Egg white",4],["Boiled chana (white)",0.5]];
+function topBy(d, key, n){ return d.foods.filter(x=>(+x[key]||0)>0).slice().sort((a,b)=>(+b[key])-(+a[key])).slice(0,n); }
+function renderDayReview(f){
+  const box=document.getElementById("dayReview"); if(!box) return; box.innerHTML="";
+  const d=day(); if(!d.foods.length) return;
+  const s=settings, T=nutrTargets(), tips=[], good=[];
+  const hr=new Date().getHours(), isToday=current===todayKey();
+  const kLeft=s.kcal-f.kcal;
+  // calories
+  if(f.kcal>s.kcal+100){ const big=topBy(d,"kcal",2).map(x=>`${x.name} (${fmt(x.kcal)})`).join(", ");
+    tips.push(["bad",`${fmt(f.kcal-s.kcal)} kcal over.`,`Most calories came from ${big}. Tomorrow: half portion of the first one, or swap it for something on your menu.`]); }
+  else if(f.kcal>=s.kcal*0.9) good.push("Calories on target");
+  // protein
+  const pGap=s.protein-f.protein;
+  if(pGap>=10){ const opts=FIX_FOODS.map(([n,q])=>{ const x=foodByName(n); if(!x) return null; const qty=Math.min(q*2, Math.max(0.5, Math.round(pGap/x.p*2)/2)); return {n, unit:x.unit, qty, p:Math.round(qty*x.p), k:Math.round(qty*x.kcal)}; })
+      .filter(Boolean).filter(o=>o.k<=Math.max(kLeft,150)+60).sort((a,b)=>(b.p/b.k)-(a.p/a.k)).slice(0,3);
+    tips.push(["warn",`${fmt(pGap)} g protein short.`, opts.length ? `Fill it with: ${opts.map(o=>`${/^\d+\s*g$/.test(o.unit)?`${Math.round(o.qty*parseFloat(o.unit))} g`:`${fmtQty(o.qty)} ${o.unit}`} ${o.n} = +${o.p} g protein, ${o.k} kcal`).join(" · ")}.` : "Make protein the first thing on your plate tomorrow."]); }
+  else good.push("Protein reached");
+  // fat
+  if(f.fat>T.fat){ const fatty=topBy(d,"fat",2).map(x=>`${x.name} (${fmt(x.fat)} g)`).join(", ");
+    tips.push(["bad",`Fat ${fmt(f.fat-T.fat)} g over the limit.`,`Most fat came from ${fatty}. One teaspoon of oil is about 4.5 g of fat: ask for less oil, choose roti over paratha, grilled over fried.`]); }
+  if(f.sat>T.sat*1.1) tips.push(["warn","Saturated fat high.","Usually ghee, butter, full-fat milk or fried food. Swap one of them tomorrow."]);
+  // fiber, fruit & veg
+  if(f.fiber<T.fiber*0.7) tips.push(["warn",`Fiber ${fmt(f.fiber)} of ${T.fiber} g.`,"Add a bowl of salad and a cup of chana or daal: fiber keeps you full on fewer calories."]);
+  if(f.fv<T.fv*0.6) tips.push(["warn",`Fruit and vegetables ${fmt(f.fv)} of ${T.fv} g.`,"Half the plate sabzi or salad at lunch and dinner gets you there."]);
+  // carbs share
+  const ck=f.carbs*4, tot=f.protein*4+ck+f.fat*9; if(tot>0 && ck/tot>0.55) tips.push(["warn",`${Math.round(100*ck/tot)}% of calories from carbs.`,"Drop one roti or half the rice and add protein instead: same fullness, better for fat loss."]);
+  // too little late in the day
+  if(isToday && hr>=12 && f.kcal<s.floor*0.8 && hr<16) tips.push(["warn","Eating very little.",`Under your ${fmt(s.floor)} kcal floor costs muscle and energy. Eat a proper protein meal before you sleep.`]);
+  if(!d.water || d.water<s.water*0.7) tips.push(["warn",`Water ${d.water||0} of ${s.water} glasses.`,"Thirst often feels like hunger. One glass before every meal."]);
+  const card=el2("div","ncard"); card.style.marginTop="12px";
+  card.appendChild(el2("h3","","Today's review: what to change"));
+  if(!tips.length){ card.appendChild(el2("p","hint","Everything on target today ✓ Keep the same menu tomorrow.")); }
+  tips.forEach(([lvl,h,b])=>{ const r=el2("div","nrow"); const tl=el2("div","nstat "+(lvl==="bad"?"bad":"warn"),h); r.append(tl, el2("p","hint",b)); r.querySelector("p").style.margin="2px 0 6px"; card.appendChild(r); });
+  if(good.length) card.appendChild(el2("p","hint","✓ "+good.join(" · ")));
+  box.appendChild(card);
 }
 
 
@@ -3818,9 +3978,9 @@ function renderSettings(){
   const aw=document.createElement("div"); aw.className="field"; aw.style.gridColumn="1/-1";
   const lab=document.createElement("label"); lab.className="switch"; lab.style.cursor="pointer";
   const cb=document.createElement("input"); cb.type="checkbox"; cb.id="set-autoTarget"; cb.checked=!!settings.autoTarget;
-  lab.append(cb, document.createTextNode(" Adjust my calorie target automatically as my weight changes (every 2 kg)"));
+  lab.append(cb, document.createTextNode(" Update calories, protein and water automatically every time I log my weight"));
   const hint=document.createElement("p"); hint.className="hint"; hint.style.margin="4px 0 0";
-  hint.textContent = settings.anchorW ? `Keeps the deficit you chose at ${settings.anchorW} kg (${(settings.anchorKcal||settings.kcal).toLocaleString()} kcal). Changing the calorie target yourself makes that the new starting point.` : "Uses your sex, age, height and activity above. Changing the calorie target yourself makes that the new starting point.";
+  hint.textContent = `Keeps a deficit of ${chosenDeficit()} kcal a day below what your body burns at your trend weight. Changing the calorie target yourself makes that your new deficit. Full details in My plan.`;
   aw.append(lab,hint); f.appendChild(aw);
 }
 
@@ -3831,7 +3991,8 @@ function renderAll(){ renderHeader(); renderToday();
   renderMedBanner(); const _mt=document.getElementById("medToday"); if(_mt) renderDoseList(_mt, current);
   if(!document.getElementById("tab-week").hidden) renderWeek();
   if(!document.getElementById("tab-progress").hidden) renderProgress();
-  if(!document.getElementById("tab-foods").hidden) renderBudget(); }
+  if(!document.getElementById("tab-foods").hidden) renderBudget();
+  if(!document.getElementById("tab-plan").hidden) renderMyPlan(); }
 
 function changed(){ scheduleSave(); renderAll(); }
 
@@ -3922,11 +4083,12 @@ function bind(){
 
   document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{
     document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected", String(x===b)));
-    ["today","meds","foods","care","body","week","progress","settings","guide"].forEach(t=>document.getElementById("tab-"+t).hidden = t!==b.dataset.tab);
+    ["today","meds","foods","plan","care","body","week","progress","settings","guide"].forEach(t=>document.getElementById("tab-"+t).hidden = t!==b.dataset.tab);
     if(b.dataset.tab==="care") renderCare();
     if(b.dataset.tab==="meds") renderMedTab();
     if(b.dataset.tab==="body") renderBmi();
     if(b.dataset.tab==="foods") renderFoodChart();
+    if(b.dataset.tab==="plan") renderMyPlan();
     if(b.dataset.tab==="week") renderWeek();
     if(b.dataset.tab==="progress") renderProgress();
     if(b.dataset.tab==="settings") renderSettings();
