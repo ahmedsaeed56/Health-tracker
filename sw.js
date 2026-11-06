@@ -2,8 +2,8 @@
 // lives in this browser's local storage and is never sent anywhere.
 // The page itself is network-first: with internet you always get the newest
 // version; without internet the saved copy opens.
-const CACHE = "cutlog-v27";
-const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
+const CACHE = "cutlog-v28";
+const FILES = ["./", "./index.html", "./gym.js", "./gym-data.js", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
   // cache:"reload" skips the browser's HTTP cache, so a fresh upload is never replaced by an old copy
