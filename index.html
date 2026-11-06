@@ -4346,6 +4346,7 @@ function bind(){
     weight: ()=> latestOf("weight") || settings.startWeight || B.w || null,
     bmi: ()=>{ const w=latestOf("weight")||settings.startWeight||B.w, hcm=settings.heightCm||B.h; return (w&&hcm) ? w/((hcm/100)**2) : null; },
     current: ()=> current,
+    sex: ()=> B.sex || settings.sex || null,
     setGym: (k, min, type, kc)=>{ const d=day(k); d.gymMin=min; d.gymType=type; d.gymKcal=kc; scheduleSave(); renderAll(); }
   };
   let gymLoading=null;

@@ -212,6 +212,41 @@ const GENERIC = {
  cardio:["Start easy for 5 minutes, finish with 3–5 minutes easy.","Talk test: you can talk but not sing."], stretch:["Ease into it; no bouncing.","Hold 20–30 seconds, breathe slowly."],
  plyo:["Land softly with bent knees.","Only once you're comfortable with squats and lunges, and not at a very high body weight."]};
 
+/* ---------------- motion drawings for exercises without photos ----------------
+   pose = [head, neck, hip, lElbow, lHand, rElbow, rHand, lKnee, lFoot, rKnee, rFoot] in a 100×100 box */
+const ST = [[50,13],[50,24],[50,55],[43,38],[41,54],[57,38],[59,54],[47,75],[46,95],[53,75],[54,95]];
+const POSES = {
+ Chair_Sit_to_Stand:[[[44,32],[45,42],[38,66],[54,47],[66,50],[54,47],[66,50],[60,67],[62,95],[60,67],[62,95]],[[52,12],[51,22],[50,53],[60,31],[71,34],[60,31],[71,34],[52,74],[52,95],[52,74],[52,95]],"chair"],
+ Wall_Sit:[[[44,13],[44,24],[44,55],[50,40],[50,55],[50,40],[50,55],[45,75],[46,95],[45,75],[46,95]],[[42,38],[42,48],[42,68],[50,58],[56,66],[50,58],[56,66],[64,68],[64,95],[64,68],[64,95]],"wall"],
+ "Wall_Push-Up":[[[71,24],[66,31],[52,61],[73,33],[82,36],[73,33],[82,36],[46,78],[40,95],[46,78],[40,95]],[[77,27],[72,34],[54,62],[71,45],[82,36],[71,45],[82,36],[47,79],[40,95],[47,79],[40,95]],"wallR"],
+ Bird_Dog:[[[78,57],[70,64],[40,64],[70,78],[70,93],[70,78],[70,93],[40,93],[24,93],[40,93],[24,93]],[[80,56],[70,64],[40,64],[82,60],[95,58],[70,78],[70,93],[40,93],[24,93],[25,63],[10,62]]],
+ Baithak:[ST.map(x=>x), [[50,46],[50,56],[44,77],[40,60],[32,68],[60,60],[66,70],[60,78],[52,93],[60,78],[52,93]]],
+ Dand:[[[80,79],[73,72],[50,46],[77,82],[82,93],[77,82],[82,93],[38,70],[25,93],[38,70],[25,93]],[[78,50],[72,58],[46,82],[73,75],[74,93],[73,75],[74,93],[36,88],[22,93],[36,88],[22,93]]],
+ Kegel:[[[47,30],[47,40],[44,64],[54,50],[60,62],[54,50],[60,62],[62,64],[62,93],[62,64],[62,93]],[[47,28],[47,38],[44,62],[54,48],[60,60],[54,48],[60,60],[62,63],[62,93],[62,63],[62,93]],"chair"],
+ Clamshell:[[[14,78],[22,80],[50,82],[30,74],[22,74],[30,74],[22,74],[64,70],[80,82],[64,70],[80,82]],[[14,78],[22,80],[50,82],[30,74],[22,74],[30,74],[22,74],[64,70],[80,82],[60,55],[80,80]]],
+ Side_Lying_Leg_Raise:[[[12,80],[20,82],[50,84],[28,75],[20,75],[28,75],[20,75],[70,85],[90,86],[70,85],[90,86]],[[12,80],[20,82],[50,84],[28,75],[20,75],[28,75],[20,75],[70,85],[90,86],[68,70],[86,58]]],
+ Fire_Hydrant:[[[78,57],[70,64],[40,64],[70,78],[70,93],[70,78],[70,93],[40,93],[24,93],[40,93],[24,93]],[[78,57],[70,64],[40,64],[70,78],[70,93],[70,78],[70,93],[40,93],[24,93],[36,66],[22,70]]],
+ March_in_Place:[[[50,13],[50,24],[50,55],[43,38],[37,48],[57,38],[62,30],[44,62],[46,80],[53,75],[54,95]],[[50,13],[50,24],[50,55],[43,38],[38,30],[57,38],[63,48],[47,75],[46,95],[56,62],[54,80]]],
+ Step_Touch:[[[46,13],[46,24],[46,55],[38,36],[32,44],[54,36],[60,44],[40,75],[34,95],[48,75],[46,95]],[[54,13],[54,24],[54,55],[46,36],[40,44],[62,36],[68,44],[52,75],[54,95],[60,75],[66,95]]],
+ Step_Jack:[ST.map(x=>x), [[50,13],[50,24],[50,55],[40,16],[36,5],[60,16],[64,5],[43,75],[36,95],[53,75],[54,95]]],
+ Stair_Climbing:[[[50,13],[50,24],[50,55],[44,38],[40,50],[57,38],[61,50],[60,66],[62,78],[49,76],[46,95]],[[56,9],[56,20],[56,51],[50,34],[46,46],[63,34],[67,46],[58,70],[62,78],[68,58],[74,62]],"stairs"],
+ Seated_March:[[[47,30],[47,40],[44,64],[40,52],[38,62],[56,52],[60,60],[60,56],[62,80],[62,64],[62,93]],[[47,30],[47,40],[44,64],[40,52],[38,60],[56,52],[60,62],[62,64],[62,93],[60,56],[62,80]],"chair"],
+ Heel_Slides:[[[14,82],[22,84],[50,86],[32,92],[42,93],[32,92],[42,93],[64,68],[76,92],[64,68],[76,92]],[[14,82],[22,84],[50,86],[32,92],[42,93],[32,92],[42,93],[64,68],[76,92],[70,90],[90,92]]],
+ Standing_Side_Crunch:[[[50,13],[50,24],[50,55],[40,20],[44,12],[60,20],[56,12],[47,75],[46,95],[53,75],[54,95]],[[46,15],[47,26],[50,55],[38,24],[43,14],[56,34],[60,26],[47,75],[46,95],[62,60],[66,76]]],
+ Glute_Bridge_March:[[[14,84],[22,84],[48,70],[30,92],[40,93],[30,92],[40,93],[64,62],[72,92],[64,62],[72,92]],[[14,84],[22,84],[48,70],[30,92],[40,93],[30,92],[40,93],[64,62],[72,92],[62,58],[74,72]]],
+ Burpee:[ST.map(x=>x), [[82,66],[75,70],[45,74],[75,82],[76,93],[75,82],[76,93],[30,84],[15,92],[30,84],[15,92]]],
+ Brisk_Walk_Outdoor:[[[52,13],[52,24],[50,55],[44,38],[40,50],[60,38],[64,48],[56,74],[62,94],[46,75],[38,93]],[[52,13],[52,24],[50,55],[58,38],[62,50],[45,38],[40,48],[44,74],[38,94],[56,75],[62,93]]],
+ Dumbbell_RDL:[ST.map(x=>x), [[78,42],[70,45],[44,56],[69,58],[68,72],[69,58],[68,72],[47,75],[46,95],[47,75],[46,95]]],
+};
+function figSVG(p, color){ const L=(a,b)=>`<line x1="${p[a][0]}" y1="${p[a][1]}" x2="${p[b][0]}" y2="${p[b][1]}"/>`;
+  return `<g stroke="${color}" stroke-width="4.5" stroke-linecap="round" fill="none">${L(1,2)}${L(1,3)}${L(3,4)}${L(1,5)}${L(5,6)}${L(2,7)}${L(7,8)}${L(2,9)}${L(9,10)}</g><circle cx="${p[0][0]}" cy="${p[0][1]}" r="6.5" fill="${color}"/>`; }
+function propSVG(k){ return k==="chair" ? '<path d="M30 66 H58 M32 66 V96 M56 66 V96 M30 66 V40" stroke="#9aa3ad" stroke-width="3" fill="none"/>' :
+  k==="wall" ? '<path d="M37 0 V96" stroke="#9aa3ad" stroke-width="4"/>' : k==="wallR" ? '<path d="M84 0 V96" stroke="#9aa3ad" stroke-width="4"/>' :
+  k==="stairs" ? '<path d="M40 96 H58 V80 H76 V64 H96" stroke="#9aa3ad" stroke-width="3" fill="none"/>' : ""; }
+function poseBox(id){ const P = POSES[id]; if(!P) return null; const w = h("div","gx-img gx-pose");
+  const svg = f => `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M0 96 H100" stroke="#c9ced4" stroke-width="2"/>${propSVG(P[2])}${figSVG(P[f], "var(--gym)")}</svg>`;
+  let f=0; w.innerHTML = svg(0); w.dataset.anim="1"; w._t = () => { f=1-f; w.innerHTML = svg(f); }; return w; }
+
 /* ---------------- state ---------------- */
 let G = load();
 function load(){ try{ return JSON.parse(localStorage.getItem(GKEY)||"null") || {}; }catch(e){ return {}; } }
@@ -222,7 +257,28 @@ function bmi(){ return (S.bmi && S.bmi()) || null; }
 function prof(){ if(!G.prof){ const b = bmi()||25;
   G.prof = {goal: b>=25 ? "lose" : "fit", level:"new", days:5, mins:60, preset:"small", eq:presetEq("small"),
             knee:false, back:false, shoulder:false, low: b>=35, wdays:[1,2,4,5,6]}; save(); }
-  return G.prof; }
+  const P = G.prof; // fields added later get defaults
+  if(P.sex==null) P.sex = (S.sex && S.sex()==="f") ? "f" : "m";
+  if(P.combo==null) P.combo = true;
+  if(P.situation==null){ P.situation="none"; P.tri=2; P.ppWeeks=8; P.csec=false; P.pcos=false; P.glute=false; }
+  if(!P.start) P.start = today();
+  return P; }
+function addDaysKey(k, n){ const d = dateObj(k); d.setDate(d.getDate()+n); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function programWeek(p){ p = p || prof(); return Math.max(1, Math.floor((dateObj(today()) - dateObj(p.start)) / 864e5 / 7) + 1); }
+// Phase 1 (weeks 1–6): machines, dumbbells, learning form. Phase 2 (weeks 7–12): dumbbell deadlifts, barbell bench, pull-ups.
+// Phase 3 (week 13+): barbell squat, deadlift, rows, overhead press, jumps. Experience moves you straight to a later phase.
+function currentPhase(p){ p = p || prof(); const w = programWeek(p); const base = p.level==="exp" ? 3 : p.level==="some" ? 2 : 1;
+  return Math.max(base, w>=13 ? 3 : w>=7 ? 2 : 1); }
+function pregnant(p){ return p.sex==="f" && p.situation==="preg"; }
+function postpartum(p){ return p.sex==="f" && p.situation==="post"; }
+const GENTLE = new Set(["Walking_Treadmill","Brisk_Walk_Outdoor","Recumbent_Bike","Bicycling_Stationary","March_in_Place","Step_Touch","Seated_March","Kegel","Heel_Slides",
+  "Bird_Dog","Butt_Lift_Bridge","Glute_Bridge_March","Clamshell","Side_Lying_Leg_Raise","Wall_Push-Up","Chair_Sit_to_Stand","Cat_Stretch","Childs_Pose","Standing_Pelvic_Tilt"]);
+function weeklyCardio(p){ if(pregnant(p)) return 150; if(postpartum(p)) return p.ppWeeks<6 ? 60 : 150;
+  let t = ({lose:250, fit:150, muscle:90, strength:75})[p.goal] || 150; if(p.sex==="f" && p.pcos) t = Math.max(t, 250); return t; }
+function rampFactor(p){ if(p.level!=="new") return 1; return Math.min(1, 0.5 + 0.1*programWeek(p)); }
+function cardioPerDay(p){ const cap = Math.max(15, Math.round((p.mins||60)*0.5/5)*5); // cardio fits after strength in the session
+  return Math.max(10, Math.min(cap, Math.round(weeklyCardio(p) / Math.max(1,p.days) / 5) * 5)); }
+function cardioExtra(p){ return Math.max(0, weeklyCardio(p) - cardioPerDay(p)*p.days); }
 function presetEq(p){
   if(p==="full") return EQUIP.map(e=>e.k);
   if(p==="small") return ["dumbbell","barbell","ezbar","plates","bench","rack","legpress","legext","legcurl","latpull","cablerow","cable","pecdeck","chestpress","pullbar","dip","abbench","treadmill","bike","mat","box","bands","calf"];
@@ -241,6 +297,8 @@ const DAYLABEL = {fullA:"Full body A",fullB:"Full body B",fullC:"Full body C",up
  push:"Push (chest, shoulders, triceps)",pull:"Pull (back, biceps)",legs:"Legs",cardio:"Cardio + core"};
 function split(p){
   const d = p.days, newb = p.level==="new";
+  if(p.combo){ return ({2:["fullA","fullB"],3:["fullA","fullB","fullC"],4:["lowerA","upperA","lowerB","upperB"],
+    5:["lowerA","upperA","lowerB","upperB","fullC"],6:["lowerA","upperA","fullC","lowerB","upperB","fullA"]})[Math.min(6,Math.max(2,d))]; }
   if(d<=2) return ["fullA","fullB"];
   if(d===3) return ["fullA","fullB","fullC"];
   if(d===4) return newb ? ["fullA","cardio","fullB","cardio"] : ["upperA","lowerA","upperB","lowerB"];
@@ -254,12 +312,17 @@ function eligible(e, p){
   if(p.knee && e.f.includes("K")) return false;
   if(p.back && e.f.includes("B")) return false;
   if(p.shoulder && e.f.includes("S")) return false;
+  if((e.ph||1) > currentPhase(p)) return false;
+  if(pregnant(p)){ if(/[HCX]/.test(e.f) || ["plyo","cond","power"].includes(e.p)) return false; if(p.tri>=2 && /[LF]/.test(e.f)) return false; if(p.tri>=3 && ["Plank","Side_Bridge"].includes(e.id)) return false; }
+  if(postpartum(p)){ if(/[HCX]/.test(e.f) || ["plyo","cond","power"].includes(e.p)) return false; if(p.ppWeeks<6 && !GENTLE.has(e.id)) return false;
+    if(p.ppWeeks<12 && (e.f.includes("B") || e.p==="hinge")) return false; }
   return true; }
 function score(e, p){ let s = 0;
   if(p.level==="new"){ if(e.eq.some(k=>["legpress","chestpress","latpull","cablerow","shoulderpress","pecdeck","legext","legcurl","rowmachine","cable"].includes(k))) s+=3;
     if(e.eq.includes("dumbbell")) s+=2; if(e.eq.includes("barbell")) s-=2; }
   if(p.low && e.p==="cardio" && ["bike","recumbent","elliptical","treadmill"].some(k=>e.eq.includes(k))) s+=4;
   if(e.p==="cardio" && e.id==="Walking_Treadmill") s+=3;
+  if(p.sex==="f" && (pregnant(p)||postpartum(p)) && GENTLE.has(e.id)) s+=3;
   if(p.level==="new" || p.low){ if(e.f.includes("B")) s-=3; if(e.f.includes("K")) s-=2; if(e.f.includes("S")) s-=1; }
   if(["Plank","Dead_Bug","Bird_Dog","Side_Bridge","Pallof_Press"].includes(e.id) && p.level==="new") s+=2;
   if(e.img && e.img.length) s+=1; return s; }
@@ -274,6 +337,7 @@ function dose(p, e){
   if(e.p==="cardio") return {sets:1, reps:"", min: p.goal==="lose" ? 30 : 20, lvl:1};
   if(e.p==="stretch") return {sets:1, reps:"30 s each side", rest:0};
   if(e.p==="core") return {sets: p.level==="new"?2:3, reps: ["Plank","Side_Bridge","Wall_Sit"].includes(e.id) ? "20–40 s" : "10–15", rest:45};
+  if(pregnant(p) || (postpartum(p) && p.ppWeeks<12)) return {sets:2, reps:"10–12 (light, talk test)", rest:75};
   const big = ["squat","hinge","pushh","pullv","pullh","pushv","lunge"].includes(e.p);
   let sets=3, reps="10–12", rest=75;
   if(p.goal==="lose"){ reps = big ? "10–12" : "12–15"; rest = 60; }
@@ -293,12 +357,17 @@ function generate(){
       ["core","core"].forEach((sl,j)=>{ const e = pick(sl, p, dayUsed, i+j) || pick(sl, p, dayUsed, 0); if(e){ dayUsed.add(e.id); items.push({id:e.id, ...dose(p,e)}); } });
       ["stretch","stretch"].forEach(sl=>{ const e = pick(sl, p, dayUsed, 0); if(e){ dayUsed.add(e.id); items.push({id:e.id, ...dose(p,e)}); } });
     } else {
-      SLOTS[t].slice(0, nEx).forEach(sl => { const v = sl==="core" ? i : variant; const e = pick(sl, p, dayUsed, v) || pick(sl, p, dayUsed, 0) || pick(sl, p, new Set(), 0);
+      let slots = SLOTS[t].slice(0, nEx);
+      if(p.sex==="f" && p.glute && !t.startsWith("upper")) slots = [...new Set(["glutes", ...slots])].slice(0, nEx+1);
+      if(postpartum(p) || pregnant(p)) slots = ["squat","pushh","pullh","glutes","core","stretch"].slice(0, Math.max(4,nEx));
+      if(p.combo) slots = slots.slice(0, Math.max(3, nEx-1));          // make room for the cardio part
+      slots.forEach(sl => { const v = sl==="core" ? i : variant; const e = pick(sl, p, dayUsed, v) || pick(sl, p, dayUsed, 0) || pick(sl, p, new Set(), 0);
         if(e){ dayUsed.add(e.id); items.push({id:e.id, ...dose(p,e)}); } });
-      if(p.goal==="lose" || p.mins>=60){ const c = pick("cardio", p, new Set(), variant%2); if(c) items.push({id:c.id, ...dose(p,c), min: p.goal==="lose"?15:10}); }
+      if(p.combo || p.goal==="lose" || p.mins>=60){ const c = pick("cardio", p, new Set(), variant%2); if(c) items.push({id:c.id, ...dose(p,c), min: p.combo ? cardioPerDay(p) : (p.goal==="lose"?15:10)}); }
+      if(postpartum(p) && !items.some(x=>x.id==="Kegel")) items.push({id:"Kegel", sets:3, reps:"10 × 5 s holds", rest:30});
     }
     return {name: DAYLABEL[t], type: t, wd: p.wdays[i] != null ? p.wdays[i] : null, items}; });
-  G.plan = {days, made: new Date().toISOString(), final:false}; save(); }
+  G.plan = {days, made: new Date().toISOString(), final:false, phase: currentPhase(p)}; save(); }
 
 /* ---------------- tiny DOM helpers ---------------- */
 function h(tag, cls, text){ const e = document.createElement(tag); if(cls) e.className = cls; if(text!=null) e.textContent = text; return e; }
@@ -307,7 +376,7 @@ function btn(text, cls, fn){ const b = h("button", "btn "+(cls||""), text); b.ty
 function img(e, size){ const w = h("div","gx-img"); if(size) w.style.width = w.style.height = size+"px";
   if(e && e.img && e.img.length){ const im = h("img"); im.alt = e.n; im.loading="lazy"; im.src = "data:image/webp;base64,"+e.img[0]; w.appendChild(im);
     if(e.img[1]){ let f=0; w.dataset.anim="1"; w._t = () => { f=1-f; im.src = "data:image/webp;base64,"+e.img[f]; }; } }
-  else { w.classList.add("noimg"); w.textContent = "🏋️"; }
+  else { const pb = e && poseBox(e.id); if(pb){ if(size) pb.style.width = pb.style.height = size+"px"; return pb; } w.classList.add("noimg"); w.textContent = "🏋️"; }
   return w; }
 setInterval(()=>{ document.querySelectorAll('#tab-gym .gx-img[data-anim="1"]').forEach(w=>{ if(w.offsetParent && w._t) w._t(); }); }, 1100);
 function today(){ return S.current ? S.current() : new Date().toISOString().slice(0,10); }
@@ -319,9 +388,20 @@ const SUBS = [["today","🏋️ Today's workout"],["plan","🗓️ My plan"],["l
 function render(){
   const root = document.getElementById("tab-gym"); if(!root) return; root.innerHTML = "";
   const hero = h("div","gx-hero"); const ht = h("div"); ht.append(h("h1","","Gym"), h("p","hint",`Your plan, exercises with photos, equipment and calories, set up for ${Math.round(kg())} kg${bmi()?` (BMI ${bmi().toFixed(1)})`:""}. Everything stays on this device.`)); hero.appendChild(ht); root.appendChild(hero);
-  const nav = h("div","seg gx-nav"); SUBS.forEach(([k,t]) => { const b = sbtn(t, ()=>{ SUB=k; pickFor=null; render(); window.scrollTo(0,0); }); b.setAttribute("aria-pressed", String(SUB===k)); nav.appendChild(b); }); root.appendChild(nav);
+  const P = prof(); const sx = h("div","seg gx-sex"); sx.setAttribute("role","group"); sx.setAttribute("aria-label","Plan for");
+  [["m","👨 Men"],["f","👩 Women"]].forEach(([v,t])=>{ const b = sbtn(t,()=>{ P.sex=v; if(v==="m" && SUB==="women") SUB="today"; save(); render(); }); b.setAttribute("aria-pressed", String(P.sex===v)); sx.appendChild(b); });
+  root.appendChild(sx);
+  const ph = currentPhase(P), wk = programWeek(P), ban = h("div","gx-phase");
+  const PHN = {1:"Phase 1 · Learn the moves (machines, dumbbells, bodyweight)",2:"Phase 2 · Build (dumbbell deadlifts, barbell bench, pull-ups unlocked)",3:"Phase 3 · Strength (barbell squat, deadlift, rows, overhead press unlocked)"};
+  ban.append(h("b","",`Week ${wk} of your program · ${PHN[ph]}`));
+  if(ph<3 && P.level==="new"){ const unlock = addDaysKey(P.start, ph===1?42:84); ban.append(h("span","hint",` Next phase unlocks on ${dateObj(unlock).toLocaleDateString("en-GB",{day:"numeric",month:"short"})} (week ${ph===1?7:13}). Heavy barbell lifts and deadlifts wait until your form and joints are ready.`)); }
+  if(G.plan && G.plan.phase && G.plan.phase < ph){ ban.classList.add("new"); ban.append(h("span","",` 🎉 A new phase is unlocked.`), btn("Rebuild my plan for it","small",()=>{ generate(); render(); })); }
+  if(pregnant(P)) ban.append(h("span","hint",` 🤰 Pregnancy mode: no lying on your back after the first trimester, no crunches, jumping or heavy lifting.`));
+  if(postpartum(P)) ban.append(h("span","hint",` 🍼 After-birth mode (${P.ppWeeks} weeks): gentle rebuild, pelvic floor first.`));
+  root.appendChild(ban);
+  const nav = h("div","seg gx-nav"); (P.sex==="f" ? SUBS.slice(0,2).concat([["women","🌸 Women's health"]], SUBS.slice(2)) : SUBS).forEach(([k,t]) => { const b = sbtn(t, ()=>{ SUB=k; pickFor=null; render(); window.scrollTo(0,0); }); b.setAttribute("aria-pressed", String(SUB===k)); nav.appendChild(b); }); root.appendChild(nav);
   const body = h("div","gx-body"); root.appendChild(body);
-  ({today:rToday, plan:rPlan, lib:rLib, equip:rEquip, cal:rCal, guide:rGuide, hist:rHist})[SUB](body); }
+  ({today:rToday, plan:rPlan, lib:rLib, equip:rEquip, cal:rCal, guide:rGuide, hist:rHist, women:rWomen})[SUB](body); }
 window.renderGym = render;
 
 /* ---------------- TODAY ---------------- */
@@ -345,6 +425,13 @@ function rToday(box){
   const est = sessionKcal(L); const sum = h("div","kpis");
   [[`${est.min} min`,"planned time"],[`~${est.kcal} kcal`,"estimated burn"],[`${L.items.filter(x=>x.done || (x.sets && x.sets.length && x.sets.every(s=>s.done))).length}/${L.items.length}`,"exercises done"],[pd.name,"today's session"]].forEach(([v,l])=>{ const c=h("div","kpi"); c.append(h("b","",v), h("span","",l)); sum.appendChild(c); });
   box.appendChild(sum);
+  const p = prof(); const tgt = Math.round(weeklyCardio(p)*rampFactor(p));
+  const wkMin = weekCardioDone(k);
+  const cg = h("div","gx-card gx-cg"); cg.append(h("b","",`Cardio this week: ${wkMin} of ${tgt} min`));
+  const bar = h("div","gx-bar"); const fill = h("i"); fill.style.width = Math.min(100, Math.round(wkMin/Math.max(1,tgt)*100))+"%"; bar.appendChild(fill); cg.appendChild(bar);
+  cg.appendChild(h("div","hint",`Order: strength first, then cardio (better for strength and fat loss). Today's cardio: about ${Math.round(cardioPerDay(p)*rampFactor(p)/5)*5} min at a pace where you can talk but not sing.${rampFactor(p)<1?" You're still building up, so the target grows each week until week 5.":""}`));
+  box.appendChild(cg);
+  const lt = h("div","gx-row"); lt.append(btn(L.light ? "🪶 Lighter day is on (tap to undo)" : "🪶 Tired, sore or on your period? Make today lighter","ghost small",()=>{ toggleLight(L); save(); render(); })); box.appendChild(lt);
   const wu = h("details","gx-card"); wu.append(h("summary","","🔥 Warm-up first (5–8 min) — tap to see"));
   const wl = h("ol"); ["3–5 min easy treadmill walk or bike","10 arm circles each way + 10 shoulder rolls","10 bodyweight or chair squats, 10 glute bridges","1 light set (50% weight, 10 reps) of the first exercise"].forEach(t=>wl.appendChild(h("li","",t))); wu.appendChild(wl); box.appendChild(wu);
   L.items.forEach((it, idx) => box.appendChild(todayItem(L, it, idx, k)));
@@ -357,9 +444,15 @@ function rToday(box){
   box.appendChild(fin);
   box.appendChild(h("p","hint","Calories are estimates from MET values (2024 Compendium of Physical Activities; ACSM walking equations): MET × your weight × time. Real burn varies with effort and fitness."));
 }
+function weekCardioDone(k){ const d = dateObj(k); const mon = new Date(d); mon.setDate(d.getDate()-((d.getDay()+6)%7)); let m = 0;
+  Object.keys(G.logs||{}).forEach(x=>{ const dx = dateObj(x); if(dx>=mon && dx<=d){ (G.logs[x].items||[]).forEach(it=>{ const e=EXI[it.id]; if(e && e.p==="cardio" && it.done) m += +it.min||0; }); } }); return m; }
+function toggleLight(L){ L.light = !L.light; const f = L.light ? 0.7 : 1/0.7;
+  L.items.forEach(it=>{ const e = EXI[it.id]; if(!e) return;
+    if(e.p==="cardio"){ it.min = Math.max(5, Math.round((+it.min||20)*f/5)*5); if(L.light){ it._lvl = it.lvl; it.lvl = 0; it._sp = it.speed; it.speed = Math.min(+it.speed||5, 4.5); it._gr = it.grade; it.grade = Math.min(+it.grade||0, 3); } else { it.lvl = it._lvl ?? it.lvl; it.speed = it._sp ?? it.speed; it.grade = it._gr ?? it.grade; } }
+    else if(it.sets){ if(L.light){ if(it.sets.length>1) it.sets.pop(); } else it.sets.push({kg:"",r:"",done:false}); } }); }
 function newLog(di){ const d = G.plan.days[di];
   return {day:di, start:Date.now(), items: d.items.map(it => { const e = EXI[it.id]||{};
-    if(e.p==="cardio") return {id:it.id, min:it.min||20, lvl:it.lvl||1, speed:5.5, grade:5, done:false};
+    if(e.p==="cardio"){ const p = prof(); const m = Math.max(5, Math.round((it.min||20)*rampFactor(p)/5)*5); return {id:it.id, min:m, lvl: p.level==="new"?0:(it.lvl||1), speed: p.low?4.5:5.5, grade: p.low?3:5, done:false}; }
     if(e.p==="stretch") return {id:it.id, done:false, reps:it.reps};
     return {id:it.id, reps:it.reps, rest:it.rest, sets: Array.from({length: it.sets||3}, ()=>({kg:"", r:"", done:false}))}; })}; }
 function cardioMET(it){ const e = EXI[it.id]; const key = e.eq[0];
@@ -418,6 +511,8 @@ function rPlan(box){
   f.appendChild(segQ("Experience", "level", [["new","New (under 3 months)"],["some","Some (3–12 months)"],["exp","Experienced (1 year+)"]]));
   f.appendChild(segQ("Days per week", "days", [[2,"2"],[3,"3"],[4,"4"],[5,"5"],[6,"6"]]));
   f.appendChild(segQ("Minutes per session", "mins", [[30,"30"],[45,"45"],[60,"60"],[75,"75"]]));
+  f.appendChild(segQ("Every session", "combo", [[true,"Strength + cardio every day (recommended)"],[false,"Separate strength and cardio days"]]));
+  const sd = h("div","field"); sd.appendChild(h("label","","Program start date (your phases are counted from this)")); const si = h("input"); si.type="date"; si.value=p.start; si.onchange=()=>{ if(si.value){ p.start=si.value; save(); render(); } }; sd.appendChild(si); f.appendChild(sd);
   const wd = h("div","field"); wd.appendChild(h("label","",`Training days (pick ${p.days})`)); const ws = h("div","seg");
   [1,2,3,4,5,6,0].forEach(d=>{ const b = sbtn(DAYNAMES[d],()=>{ const i=p.wdays.indexOf(d); if(i>=0) p.wdays.splice(i,1); else p.wdays.push(d); p.wdays.sort((a,b)=>((a+6)%7)-((b+6)%7)); save(); render(); }); b.setAttribute("aria-pressed", String(p.wdays.includes(d))); ws.appendChild(b); });
   wd.appendChild(ws); f.appendChild(wd);
@@ -434,11 +529,13 @@ function rPlan(box){
   if(!G.plan) return;
   const pc = h("div","gx-card"); pc.appendChild(h("h3","", "2 · Your weekly plan " + (G.plan.final ? "✅ (final)" : "(draft — edit, then make it final)")));
   const tot = G.plan.days.reduce((a,d)=>{ const L = {items: d.items.map(it=>{ const e=EXI[it.id]||{}; return e.p==="cardio"?{id:it.id,min:it.min,lvl:1,speed:5.5,grade:5}:e.p==="stretch"?{id:it.id}:{id:it.id,rest:it.rest,sets:Array(it.sets||3).fill({})}; })}; const s=sessionKcal(L); return {min:a.min+s.min, kcal:a.kcal+s.kcal}; }, {min:0,kcal:0});
+  pc.appendChild(h("p","gx-target",`Your cardio target: ${weeklyCardio(p)} min a week = about ${cardioPerDay(p)} min after strength on each of your ${p.days} days${rampFactor(p)<1?` (starting at ${Math.round(cardioPerDay(p)*rampFactor(p)/5)*5} min and growing to ${cardioPerDay(p)} by week 5)`:""}.${cardioExtra(p)?` The other ${cardioExtra(p)} min: brisk walks outside the gym (e.g. ${Math.round(cardioExtra(p)/7/5)*5 || 5} min every day, or after dinner).`:""}`));
   pc.appendChild(h("p","hint",`About ${tot.min} minutes and ~${tot.kcal.toLocaleString()} kcal of exercise a week at your weight. ${p.goal==="lose"?"With your food plan, that adds roughly "+ (tot.kcal/7700).toFixed(2) +" kg of extra fat loss a week.":""}`));
   G.plan.days.forEach((d,di) => pc.appendChild(planDay(d, di)));
   const row = h("div","gx-row");
   row.append(btn(G.plan.final ? "Saved as final ✓ (edit any time)" : "✅ Make this my final plan","",()=>{ G.plan.final = true; G.plan.finalAt = new Date().toISOString(); save(); render(); }));
   pc.appendChild(row); box.appendChild(pc);
+  box.appendChild(h("p","hint","Doing strength and cardio every day? Yes, that works well: lift first, then cardio, and alternate lower-body and upper-body days so each muscle gets about 48 hours to recover. Phases: weeks 1–6 machines and dumbbells, weeks 7–12 dumbbell deadlifts, barbell bench and pull-ups, week 13+ barbell squats, deadlifts and overhead press."));
   box.appendChild(h("p","hint","How the plan is built: beginners get full-body days (each muscle 2–3 times a week) with machines and dumbbells first; 3 sets of 10–15 reps for fat loss, rest 60–90 s; cardio for fat loss; risky moves are removed for the pains you ticked. Swap anything you don't like with ⇄."));
 }
 function segQ(label, key, opts, after){ const p = prof(); const f = h("div","field"); f.appendChild(h("label","",label)); const s = h("div","seg");
@@ -497,6 +594,9 @@ function openEx(e){
   dlg.onclick = ev => { if(ev.target===dlg) dlg.remove(); };
   card.appendChild(btn("✕ Close","ghost small gx-close",()=>dlg.remove()));
   card.appendChild(h("h2","",e.n));
+  const big = img(e); big.classList.add("gx-big"); card.appendChild(big);
+  card.appendChild(h("p","hint", e.img.length>1 ? "The picture moves between the start and end position. Do it slowly: about 2 seconds down, 1 second up." : "The figure shows the movement from start to end."));
+  if((e.ph||1)>1) card.appendChild(h("p","gx-up",`🔒 Phase ${e.ph} exercise: ${e.ph===2?"from week 7":"from week 13"} for beginners, once your form is solid on the easier moves.`));
   if(e.img.length){ const ph = h("div","gx-photos"); e.img.forEach((b,i)=>{ const f = h("figure"); const im = h("img"); im.src="data:image/webp;base64,"+b; im.alt = `${e.n} — ${i?"end":"start"} position`; f.append(im, h("figcaption","", i?"End position":"Start position")); ph.appendChild(f); }); card.appendChild(ph); }
   const meta = h("div","chips"); [PATTERN[e.p], e.lv==="b"?"Beginner":"Intermediate", ...e.eq.filter(k=>k!=="none").map(k=>(EQ[k]||{}).n||(k==="body"?"Bodyweight":k))].forEach(t=>t&&meta.appendChild(h("span","chip",t))); card.appendChild(meta);
   card.appendChild(h("p","", `Works: ${e.pm.join(", ")}${e.sm.length?` · also ${e.sm.join(", ")}`:""}`));
@@ -585,6 +685,82 @@ function rHist(box){
   ks.slice(0,14).forEach(k=>{ const L=G.logs[k]; const d=(G.plan&&G.plan.days[L.day])||{}; lc.appendChild(h("p","",`${k} · ${d.name||"Workout"} · ${L.min||"–"} min · ~${L.kcal||sessionKcal(L).kcal} kcal ${L.finished?"✅":"(not finished)"}`)); });
   box.appendChild(lc); }
 
+
+/* ---------------- WOMEN'S HEALTH ---------------- */
+const SYMS = [["cramps","Cramps"],["heavy","Heavy flow"],["tired","Very tired"],["head","Headache"],["bloat","Bloating"],["mood","Low mood"],["good","Feeling strong"]];
+function cycleInfo(){ const C = G.cycle || (G.cycle = {starts:[], sym:{}}); const st = C.starts.slice().sort();
+  const lens = []; for(let i=1;i<st.length;i++){ const d = Math.round((dateObj(st[i])-dateObj(st[i-1]))/864e5); if(d>=15 && d<=60) lens.push(d); }
+  const avg = lens.length ? Math.round(lens.slice(-6).reduce((a,b)=>a+b,0)/Math.min(6,lens.length)) : 28;
+  const last = st.filter(x=>x<=today()).pop(); const cd = last ? Math.round((dateObj(today())-dateObj(last))/864e5)+1 : null;
+  return {C, st, avg, last, cd, next: last ? addDaysKey(last, avg) : null, n: lens.length}; }
+function rWomen(box){
+  const p = prof();
+  // 1. situation
+  const f = h("div","gx-card"); f.appendChild(h("h3","","1 · Your situation (changes your plan)"));
+  f.appendChild(segQ("Right now I am", "situation", [["none","Not pregnant"],["preg","Pregnant"],["post","Had a baby (postpartum)"]]));
+  if(p.situation==="preg") f.appendChild(segQ("Trimester", "tri", [[1,"1st (weeks 1–13)"],[2,"2nd (14–27)"],[3,"3rd (28+)"]]));
+  if(p.situation==="post"){ f.appendChild(segQ("Weeks since birth", "ppWeeks", [[2,"0–3"],[4,"4–5"],[8,"6–11"],[14,"12–23"],[26,"24+"]]));
+    f.appendChild(segQ("Type of birth", "csec", [[false,"Normal"],[true,"C-section"]])); }
+  const tg = h("div","seg"); [["pcos","I have PCOS"],["glute","Extra glute and leg focus"]].forEach(([k2,t])=>{ const b=sbtn(t,()=>{ p[k2]=!p[k2]; save(); render(); }); b.setAttribute("aria-pressed",String(!!p[k2])); tg.appendChild(b); });
+  const fl = h("div","field"); fl.append(h("label","","Also"), tg); f.appendChild(fl);
+  f.appendChild(btn("🔄 Rebuild my plan with these answers","",()=>{ if(p.wdays.length!==p.days){ SUB="plan"; render(); return; } generate(); SUB="plan"; render(); }));
+  f.appendChild(h("p","hint","Pregnant or recently gave birth? Get a doctor's OK before starting or restarting exercise. Your plan then uses only safe moves (see below)."));
+  box.appendChild(f);
+
+  // 2. cycle tracker
+  const ci = cycleInfo(); const cc = h("div","gx-card"); cc.appendChild(h("h3","","2 · Period and cycle tracker"));
+  if(p.situation==="none"){
+    cc.appendChild(h("p","", ci.cd ? `Today is day ${ci.cd} of your cycle. Average cycle: ${ci.avg} days${ci.n?"":" (default until you log 2 periods)"}. Next period expected around ${dateObj(ci.next).toLocaleDateString("en-GB",{day:"numeric",month:"short"})}.` : "Log the first day of your period to start tracking."));
+    const row = h("div","gx-row"); const di = h("input"); di.type="date"; di.value=today();
+    row.append(di, btn("🩸 Period started on this day","small",()=>{ if(di.value && !ci.C.starts.includes(di.value)){ ci.C.starts.push(di.value); save(); render(); } }));
+    cc.appendChild(row);
+    if(ci.st.length) cc.appendChild(h("p","hint","Logged: " + ci.st.slice(-6).map(x=>dateObj(x).toLocaleDateString("en-GB",{day:"numeric",month:"short"})).join(", ")));
+    if(ci.st.length) cc.appendChild(btn("Undo last date","ghost small",()=>{ ci.C.starts.sort(); ci.C.starts.pop(); save(); render(); }));
+    const k = today(); const sy = ci.C.sym[k] || [];
+    const sr = h("div","field"); sr.appendChild(h("label","","How do you feel today?")); const ss = h("div","seg");
+    SYMS.forEach(([v,t])=>{ const b=sbtn(t,()=>{ const a = ci.C.sym[k] || (ci.C.sym[k]=[]); const i=a.indexOf(v); if(i>=0) a.splice(i,1); else a.push(v); save(); render(); }); b.setAttribute("aria-pressed",String(sy.includes(v))); ss.appendChild(b); });
+    sr.appendChild(ss); cc.appendChild(sr);
+    const bad = sy.filter(x=>["cramps","heavy","tired","head"].includes(x)).length;
+    const v = h("div","verdict");
+    if(bad>=2){ v.append(h("b","","Suggestion: take a lighter day."), h("p","","Do the workout with one set less, easier cardio and 30% fewer minutes (the 🪶 button on Today's workout does this). A gentle walk and stretching often ease cramps. Skipping is fine too.")); }
+    else if(bad===1){ v.append(h("b","","Train as normal, but listen to your body."), h("p","","Start the workout. If you still feel bad after the warm-up, press 🪶 Make today lighter.")); }
+    else { v.append(h("b","", sy.includes("good") ? "Feeling strong: a good day to try a little more weight." : "No symptoms logged: train as planned.")); }
+    cc.appendChild(v);
+    cc.appendChild(h("p","hint","What the research says: training by cycle phase (e.g. 'go heavy in week 2') isn't supported by good evidence. Train normally and adjust on days when symptoms are bad. Very painful, very heavy or missing periods are worth checking with a doctor."));
+  } else cc.appendChild(h("p","hint","Cycle tracking is paused while you're pregnant or postpartum."));
+  box.appendChild(cc);
+
+  // 3. guidance for the situation
+  const gd = h("div","gx-card");
+  const L = (title, arr) => { gd.appendChild(h("h3","",title)); const ul = h("ul"); arr.forEach(t=>ul.appendChild(h("li","",t))); gd.appendChild(ul); };
+  if(p.situation==="preg"){
+    L("3 · Exercise in pregnancy",["Aim for about 150 minutes a week of moderate activity (e.g. 30 min × 5 days). Walking, the stationary bike, swimming and light strength work are good.",
+      "Talk test: you should be able to hold a conversation. If you can't, slow down.","Drink plenty of water and avoid getting overheated (no hot rooms, train in a cool gym).","Keep weights light to moderate, 10–12 easy reps. Don't hold your breath while lifting."]);
+    L("Avoid",["Lying flat on your back from the 2nd trimester (the plan removes these).","Crunches, sit-ups and twisting ab work.","Jumping, running if you didn't run before, and heavy lifting.","Anything with a risk of falling or being hit: high treadmill speeds, contact sports."]);
+    L("⚠️ Stop and call your doctor if you have",["Bleeding from the vagina or fluid leaking","Regular painful contractions","Dizziness, fainting, chest pain or a headache that won't go","Shortness of breath before you start exercising","Calf pain or swelling","Less movement from the baby"]);
+  } else if(p.situation==="post"){
+    L("3 · After birth: rebuild step by step",["Weeks 0–6: walking, breathing, pelvic-floor (Kegel) exercises, gentle bridges, heel slides and bird dog. The plan shows only these.",
+      "After your 6-week check (and your doctor's OK): light full-body strength and longer walks. After a C-section, recovery can take longer — wait for your doctor's OK and avoid lifting anything heavier than your baby early on.",
+      "From about 12 weeks: build up weights slowly. Running and jumping only once you can walk 30 minutes, do 20 single-leg squats and hop without leaking or pain (usually 3+ months).",
+      "Breastfeeding: feed or pump before training, wear a supportive bra and drink extra water."]);
+    L("⚠️ See a women's-health physiotherapist or doctor if you have",["Leaking urine when you cough, jump or lift","A heavy, dragging feeling in the vagina","A gap or bulge down the middle of your tummy (diastasis recti)","Pain during or after exercise, or bleeding that gets heavier"]);
+  } else {
+    L("3 · Training tips for women",["Strength training won't make you bulky: it builds firm muscle, strong bones and a faster metabolism. Use the same plan as men, with weights that suit you.",
+      "Many Pakistani gyms have ladies-only timings (often late morning/afternoon). Ask at reception, or train at home with the 'Home' or 'No equipment' setting.",
+      "Safety: tie back a dupatta or long scarf and loose sleeves before using treadmills, bikes or cable machines — they can get caught.","Bone health: lifting weights and brisk walking protect your bones as you get older; get enough calcium, vitamin D and protein."]);
+    if(p.pcos) L("PCOS",["Guideline: at least 150 min a week of moderate activity, or 250 min for weight loss, plus strength training on 2+ days. Your cardio target is set to 250 min.",
+      "Exercise improves insulin resistance even if the scale doesn't move: track waist and energy too.","About 10,000 steps a day helps. Increase activity by about 5% a week rather than all at once."]);
+  }
+  box.appendChild(gd);
+
+  // 4. pelvic floor
+  const pf = h("div","gx-card"); pf.appendChild(h("h3","","4 · Pelvic floor (Kegel) exercises — for every woman"));
+  const kg2 = EXI["Kegel"]; if(kg2){ const r = h("div","gx-top"); r.appendChild(img(kg2, 90)); const t = h("div","gx-tt");
+    ["Find the muscles: the ones you'd use to stop passing urine and wind (don't do it while actually urinating).","Squeeze and lift up and in. Hold 5 seconds, relax 5 seconds. Breathe normally; keep tummy, thighs and bum relaxed.","10 slow holds + 10 quick squeezes, 3 times a day. Build up to 10-second holds.","It takes 3–6 months to feel the full benefit. If you can't feel anything, see a women's-health physio."].forEach(x=>t.appendChild(h("p","",x)));
+    r.appendChild(t); pf.appendChild(r); }
+  box.appendChild(pf);
+  box.appendChild(h("p","hint","Sources: ACOG guidance on exercise in pregnancy and postpartum; 2023 International PCOS Guideline; 2023 Frontiers review on menstrual cycle and training. This is general guidance, not medical advice."));
+}
 /* ---------------- styles ---------------- */
 const css = `
 #tab-gym .gx-hero{margin-top:18px}#tab-gym .gx-hero h1{margin:0 0 4px}#tab-gym .gx-nav{margin:10px 0 14px}
@@ -615,6 +791,13 @@ const css = `
 .gx-mt{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:5px;display:flex;flex-direction:column;gap:3px;font-size:.75rem;cursor:pointer;color:var(--ink);text-align:left}
 .gx-table{width:100%;border-collapse:collapse;font-size:.86rem}.gx-table td,.gx-table th{border-bottom:1px solid var(--line);padding:5px 4px;text-align:left}
 #tab-gym .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+#tab-gym input:not([type=checkbox]),#tab-gym select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 8px;font:inherit;font-size:16px;min-height:38px}
+#tab-gym input::placeholder{color:var(--muted);opacity:.8}#tab-gym select option{background:var(--surface);color:var(--ink)}
+#tab-gym input[type=date]{color-scheme:light dark}
+.gx-sex{margin:8px 0}.gx-phase{border:1px solid var(--line);background:var(--surface);border-left:4px solid var(--gym);border-radius:12px;padding:9px 12px;margin:8px 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.gx-phase.new{border-left-color:var(--good,#2F8A5B)}
+.gx-bar{height:9px;border-radius:9px;background:var(--line);overflow:hidden;margin:6px 0}.gx-bar i{display:block;height:100%;background:var(--gym)}
+.gx-big{max-width:340px;margin:6px auto}.gx-pose svg{width:100%;height:100%}
 @media (max-width:520px){.gx-filters{grid-template-columns:1fr}.gx-num{width:62px}}`;
 const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 })();
